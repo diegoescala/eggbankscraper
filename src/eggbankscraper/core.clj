@@ -39,6 +39,7 @@
                 "TX" "OK" "KS" "CO" "RI" "NY" "CT"
                 "VT" "NH" "ME" "MA" "GA" "TN" "KY"
                 "OH" "WV" "PA" "NJ" "IL" "IN" "IA"
-                "HI" "MD" "DE" "AR" "ND" "SD"]]
+                "HI" "MD" "DE" "AR" "ND" "SD" "WI"
+                "MN"]]
     (spit "clinics.txt" (transduce extract-banks conj states))))
 
