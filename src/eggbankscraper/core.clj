@@ -1,4 +1,7 @@
-(ns eggbankscraper.core)
+(ns eggbankscraper.core
+  (:require [clj-http.client :as http]
+            [clj-http.util :as util]
+            [clojure.data.json :as json]))
 
 (defn extract-bank-data
   [bank-html]
@@ -24,15 +27,30 @@
   (let [base-url "https://www.fertilityauthority.com/clinics/bystate/"]
     (str base-url state)))
 
+(defn add-google-place-id 
+  [business]
+  (let [search-string (util/url-encode (str (:name business) " " (:address business)))]
+    (let [base-search-url "https://maps.googleapis.com/maps/api/place/textsearch/json?query="]
+      (let [full-url (str base-search-url search-string "&key=AIzaSyBsEZzQqUknbmCLN1cXTW59O9NDZ6kdgUM")]
+        (let [response (json/read-str (slurp full-url))]
+          (let [results (get response "results")]
+            (let [place-id (get (first results) "place_id")]
+              (assoc business :place-id place-id))))))))
+
 (def extract-banks
   (comp
     (map get-bank-data-url)
     (map get-site-contents)
     (mapcat scrape-raw-banks)
-    (map extract-bank-data)))
+    (map extract-bank-data)
+    ;(map add-google-place-id)
+    ))
 
-(defn -main
-  [& args]
+(def add-phone-numbers
+  nil)
+
+(defn scrape-fertility-site
+  []
   (let [states ["AL" "AK" "FL" "VA" "NC" "SC" "AZ" 
                 "MI" "MS" "MO" "NE" "DC" "WA" "OR" 
                 "CA" "NV" "UT" "ID" "WY" "MT" "NM"
@@ -41,5 +59,14 @@
                 "OH" "WV" "PA" "NJ" "IL" "IN" "IA"
                 "HI" "MD" "DE" "AR" "ND" "SD" "WI"
                 "MN"]]
-    (spit "clinics.txt" (transduce extract-banks conj states))))
+    (spit "clinics.txt" (prn-str (transduce extract-banks conj states)))))
 
+
+(defn -main
+  [& args]
+  ;(scrape-fertility-site))
+;  (let [clinics (read-string (slurp "clinics.txt"))]
+;    (spit "clinics-no-places.txt" (prn-str (filter #(= (:place-id %) nil) clinics)))))
+  (let [no-places (read-string (slurp "clinics-no-places.txt"))]
+    (count no-places)))
+    
