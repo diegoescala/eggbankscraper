@@ -64,9 +64,12 @@
 
 (defn -main
   [& args]
+  (let [clinics (clojure.edn/read-string (slurp "clinics-updated.txt"))]
+    (let [updated-clinics (map #(if (= (:place-id %) nil) (add-google-place-id %) %) clinics)]
+      (spit "clinics-updated.txt" (prn-str updated-clinics)))))
   ;(scrape-fertility-site))
 ;  (let [clinics (read-string (slurp "clinics.txt"))]
 ;    (spit "clinics-no-places.txt" (prn-str (filter #(= (:place-id %) nil) clinics)))))
-  (let [no-places (read-string (slurp "clinics-no-places.txt"))]
-    (count no-places)))
+;  (let [no-places (read-string (slurp "clinics-no-places.txt"))]
+;    (count no-places)))
     
