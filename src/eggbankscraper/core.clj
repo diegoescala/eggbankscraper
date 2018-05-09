@@ -61,6 +61,12 @@
                 "MN"]]
     (spit "clinics.txt" (prn-str (transduce extract-banks conj states)))))
 
+(defn count-no-places
+  []
+  (let [clinics (read-string (slurp "clinics-updated.txt"))]
+    (count (filter #(= (:place-id %) nil) clinics))))
+
+(count-no-places)
 
 (defn -main
   [& args]
