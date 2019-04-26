@@ -27,11 +27,11 @@
   (let [base-url "https://www.fertilityauthority.com/clinics/bystate/"]
     (str base-url state)))
 
-(defn add-google-place-id 
+(defn add-google-place-id
   [business]
   (let [search-string (util/url-encode (str (:name business) " " (:address business)))]
     (let [base-search-url "https://maps.googleapis.com/maps/api/place/textsearch/json?query="]
-      (let [full-url (str base-search-url search-string "&key=AIzaSyBsEZzQqUknbmCLN1cXTW59O9NDZ6kdgUM")]
+      (let [full-url (str base-search-url search-string "&key=lala123")]
         (let [response (json/read-str (slurp full-url))]
           (let [results (get response "results")]
             (let [place-id (get (first results) "place_id")]
@@ -42,17 +42,17 @@
     (map get-bank-data-url)
     (map get-site-contents)
     (mapcat scrape-raw-banks)
-    (map extract-bank-data)
+    (map extract-bank-data)))
     ;(map add-google-place-id)
-    ))
+
 
 (def add-phone-numbers
   nil)
 
 (defn scrape-fertility-site
   []
-  (let [states ["AL" "AK" "FL" "VA" "NC" "SC" "AZ" 
-                "MI" "MS" "MO" "NE" "DC" "WA" "OR" 
+  (let [states ["AL" "AK" "FL" "VA" "NC" "SC" "AZ"
+                "MI" "MS" "MO" "NE" "DC" "WA" "OR"
                 "CA" "NV" "UT" "ID" "WY" "MT" "NM"
                 "TX" "OK" "KS" "CO" "RI" "NY" "CT"
                 "VT" "NH" "ME" "MA" "GA" "TN" "KY"
@@ -78,4 +78,3 @@
 ;    (spit "clinics-no-places.txt" (prn-str (filter #(= (:place-id %) nil) clinics)))))
 ;  (let [no-places (read-string (slurp "clinics-no-places.txt"))]
 ;    (count no-places)))
-    
